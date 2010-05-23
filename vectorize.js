@@ -100,8 +100,68 @@ var Vectorize = function () {
     }
   }
 
+  function stringToEdges (str, rowWidth) {
+    var edgeSet = {};
+    for (var i = 0; i < str.length; i++) {
+      if (str[i] == "0") continue;
+      var x = i % rowWidth;
+      var y = Math.floor(i / rowWidth);
+      addBlock(edgeSet, x, y);
+    }
+    return edgeSet;
+  }
+
+  function edgesToPath (edges) {
+    var path = [];
+    var start = true;
+
+    function vertexFound(v) {
+      if (start) {
+	path.push(["M", v[0], v[1]]);
+	start = false;
+      }
+      else
+	path.push(["L", v[0], v[1]]);
+    }
+
+    function pathComplete(v) {
+      path.push(["Z"]);
+      start = true;
+    }
+
+    findVertices(edges, vertexFound, pathComplete);
+    return path;
+  }
+
+  function PathGenerator(x, y, sx, sy) {
+    x = x || 0;
+    y = y || 0;
+    sx = sx || 1;
+    sy = sy || 1;
+
+    var path = [];
+    var start = true;
+
+    this.vertexFound = function(v) {
+      if (start) {
+	path.push(["M", x + sx*v[0], y + sy*v[1]]);
+	start = false;
+      }
+      else
+	path.push(["L", x + sx*v[0], y + sy*v[1]]);
+    };
+
+    this.closePath = function () {
+      path.push(["Z"]);
+      start = true;
+    };
+
+    this.path = path;
+  }
+
   return {
     addBlock: addBlock,
-    findVertices: findVertices
+    findVertices: findVertices,
+    PathGenerator: PathGenerator
   };
 } ();

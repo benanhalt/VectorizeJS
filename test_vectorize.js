@@ -55,7 +55,55 @@ $(function(){
 	   ok(i != -1, "0,0 is a vertex. Index: " + i);
 	   var expected = ["0,0", "0,1", "1,1", "1,2", "2,2", "2,0"];
 	   for (var j = 0; j < 6; j++) {
-	     equal(expected[j], vertices[(i+j)%6]);
+	     equal(vertices[(i+j)%6], expected[j]);
 	   }
+	 });
+
+    module("PathGenerator");
+
+    test("basic path", function () {
+	   var gen = new Vectorize.PathGenerator();
+	   var expected = [];
+	   same(gen.path, expected);
+
+	   gen.vertexFound([10, 10]);
+	   expected.push(["M", 10, 10]);
+	   same(gen.path, expected);
+
+	   gen.vertexFound([10, 50]);
+	   expected.push(["L", 10, 50]);
+	   same(gen.path, expected);
+
+	   gen.vertexFound([50, 50]);
+	   expected.push(["L", 50, 50]);
+	   same(gen.path, expected);
+
+	   gen.vertexFound([50, 10]);
+	   expected.push(["L", 50, 10]);
+	   same(gen.path, expected);
+
+	   gen.closePath();
+	   expected.push(["Z"]);
+	   same(gen.path, expected);
+
+	   gen.vertexFound([20, 20]);
+	   expected.push(["M", 20, 20]);
+	   same(gen.path, expected);
+
+	   gen.vertexFound([40, 20]);
+	   expected.push(["L", 40, 20]);
+	   same(gen.path, expected);
+
+	   gen.vertexFound([40, 40]);
+	   expected.push(["L", 40, 40]);
+	   same(gen.path, expected);
+
+	   gen.vertexFound([20, 40]);
+	   expected.push(["L", 20, 40]);
+	   same(gen.path, expected);
+
+	   gen.closePath();
+	   expected.push(["Z"]);
+	   same(gen.path, expected);
 	 });
 });
