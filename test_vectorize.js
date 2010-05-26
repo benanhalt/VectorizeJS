@@ -198,10 +198,10 @@ $(function(){
 	     }
 	 });
 
-    module("PathGenerator");
+    module("PathBuilder");
 
     test("basic path", function () {
-	   var gen = new Vectorize.PathGenerator();
+	   var gen = new Vectorize.PathBuilder();
 	   var expected = [];
 	   same(gen.path, expected);
 
@@ -244,5 +244,68 @@ $(function(){
 	   gen.closePath();
 	   expected.push(["Z"]);
 	   same(gen.path, expected);
+
+	   expected = "M 10 10 L 10 50 L 50 50 L 50 10 Z M 20 20 L 40 20 L 40 40 L 20 40 Z";
+	   equal(gen.pathToString(), expected);
+	 });
+
+    test("translation", function () {
+	   var gen = new Vectorize.PathBuilder(-10, -20);
+
+	   gen.vertexFound([10, 10]);
+	   gen.vertexFound([10, 50]);
+	   gen.vertexFound([50, 50]);
+	   gen.vertexFound([50, 10]);
+	   gen.closePath();
+
+	   var expected = "M 0 -10 L 0 30 L 40 30 L 40 -10 Z";
+	   equal(gen.pathToString(), expected);
+	 });
+
+    test("scale and translate", function () {
+	   var gen = new Vectorize.PathBuilder(10, 10, 2, 3);
+	   gen.vertexFound([10, 10]);
+	   gen.vertexFound([10, 50]);
+	   gen.vertexFound([50, 50]);
+	   gen.vertexFound([50, 10]);
+	   gen.closePath();
+
+	   var expected = "M 30 40 L 30 160 L 110 160 L 110 40 Z";
+	   equal(gen.pathToString(), expected);
+	 });
+
+    test("swap X and Y", function () {
+	   var gen = new Vectorize.PathBuilder(0, 0, 1, 1, true);
+	   gen.vertexFound([10, 20]);
+	   gen.vertexFound([10, 50]);
+	   gen.vertexFound([40, 50]);
+	   gen.vertexFound([40, 20]);
+	   gen.closePath();
+
+	   var expected = "M 20 10 L 50 10 L 50 40 L 20 40 Z";
+	   equal(gen.pathToString(), expected);
+	 });
+
+    module("processRaster");
+
+    test("simple", function () {
+	   var data = "1000";
+	   var paths = Vectorize.processRaster(data, 2, 2);
+	   var count = 0;
+	   for (v in paths) count++;
+	   equal(count, 2);
+	   equal(paths[1].path.length, 4+1);
+	   equal(paths[0].path.length, 6+1);
+	 });
+
+    test("multiple", function () {
+	   var data = "4 10 20 10";
+	   var paths = Vectorize.processRaster(data.split(" "), 2, 2);
+	   var count = 0;
+	   for (v in paths) {
+	     count++;
+	     equal(paths[v].path.length, 4+1);
+	   }
+	   equal(count, 3);
 	 });
 });
