@@ -136,7 +136,7 @@ var Vectorize = function () {
     return this.path.map(function (a) {return a.join(" ");}).join(" ");
   };
 
-  function processRaster(data, r, c, createBuilder) {
+  function processRaster(data, r, c, ignore, createBuilder) {
     createBuilder = createBuilder || function () {return new PathBuilder();};
 
     var edgeSets = {};
@@ -144,6 +144,7 @@ var Vectorize = function () {
     for (var y = 0; y < r; y++) {
       for (var x = 0; x < c; x++) {
 	var v = data[i++];
+	if (v == ignore) continue;
 	if (edgeSets[v] == undefined) edgeSets[v] = {};
 	addBlock(edgeSets[v], x, y);
       }

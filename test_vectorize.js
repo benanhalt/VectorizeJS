@@ -308,4 +308,13 @@ $(function(){
 	   }
 	   equal(count, 3);
 	 });
+
+    test("ignore", function () {
+	   var data = "1000";
+	   var paths = Vectorize.processRaster(data, 2, 2, 0);
+	   var count = 0;
+	   for (v in paths) count++;
+	   equal(count, 1);
+	   equal(paths[1].path.length, 4+1);
+	 });
 });
