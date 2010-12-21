@@ -1,2 +1,5 @@
 Simple javascript library for converting raster representations of shapes into 
 vector representation suitable for SVG, etc.
+
+The QUnit and Raphael submodules are needed only for unit testing and 
+the example, respectively.

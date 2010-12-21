@@ -1,3 +1,6 @@
 [submodule "qunit"]
 	path = qunit
 	url = https://github.com/jquery/qunit.git
+[submodule "raphael"]
+	path = raphael
+	url = https://github.com/DmitryBaranovskiy/raphael.git
