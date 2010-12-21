@@ -175,8 +175,7 @@ var Vectorize = function () {
           continue; // Done with this edge.
 	}
 	// This point should never be encountered.
-	// For now, the behaviour is left undefined.
-	break;
+	throw("Reached deadend.");
       }
       // When the inner loop completes, one of the paths representing
       // the shape has been completed.
@@ -240,7 +239,7 @@ var Vectorize = function () {
   // to a set of paths.  Given the 2D raster, data, with rows, r, and columns, c,
   // it returns a dictionary of PathBuilder objects keyed by the value each
   // represents.  If the argument ignore is provided, the path for that value will
-  // not be computed. If provided, the createBuilder argument should be a function
+  // not be computed. The createBuilder argument should be a function
   // which returns a PathBuilder-like object providing vertexFound and closePath
   // methods.  If createBuilder is not provided, PathBuilder with default arguments
   // is used.
@@ -254,10 +253,14 @@ var Vectorize = function () {
     var i = 0;
     for (var y = 0; y < r; y++) {
       for (var x = 0; x < c; x++) {
-	var v = data[i++];
-	if (v == ignore) continue;
+	var v = data[i++];  // The value in this cell of the raster.
+	if (v == ignore) continue;  // Is this value to be ignored?
+
+	// A new edgeSet needs to be created if this value hasn't been seen before.
 	if (edgeSets[v] == undefined) edgeSets[v] = {};
-	addBlock(edgeSets[v], x, y);  // Add a block to the appropriate edge set.
+
+	// Add a block to the appropriate edge set.
+	addBlock(edgeSets[v], x, y);
       }
     }
 
